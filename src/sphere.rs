@@ -1,18 +1,57 @@
 use crate::vec3::*;
-use crate::ray::Ray;
+use crate::ray::{Ray, Hittable};
 
-pub fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> bool {
-    let oc: Vec3 = r.origin - center;
-    let a = Vec3::stat_dot(r.direction, r.direction);
-    let b = 2.0 * Vec3::stat_dot(oc, r.direction);
-    let c = Vec3::stat_dot(oc, oc) - radius*radius;
-    let discriminant = b*b - 4.0*a*c;
-
-    discriminant > 0.0
+pub struct Sphere {
+    pub center: Point3,
+    pub radius: f64,
 }
 
-pub fn ray_color(r: &Ray) -> Color {
-    if (hit_sphere(Point3(0,0,-1), 0.5, r))
-        Color::new(1, 0, 0);
-    let unit_dir: Vec3 = 
+impl Sphere {
+    pub fn new(center: Point3, radius: f64) -> Sphere {
+        Sphere {
+            center,
+            radius,
+        }
+    }
+}
+
+impl Hittable for Sphere {
+    pub fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> bool {
+        let oc: Vec3 = r.origin - self.center;
+        let a = r.direction().length_squared();
+        let half_b = oc.dot(r.direction());
+        let c = oc.length_squared() - self.radius*self.radius;
+
+        let discriminant = half_b*half_b - a*c;
+        if discriminant < 0.0 {
+            return false
+        }
+        let sqrtd = discriminant.sqrt();
+
+        // Find the nearest root that lies in the acceptable range
+        let root = (-half_b - sqrtd) / a;
+        if root < t_min || t_max < root {
+            let root = (-half_b + sqrtd) / a;
+            if root < t_min || t_max < root {
+                return false
+            }
+        }
+
+
+    }
+}
+
+pub fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> f64 {
+    let oc: Vec3 = r.origin - center;
+    let a = r.direction().length_squared();
+    let half_b = oc.dot(r.direction());
+    let c = oc.length_squared() - radius*radius;
+    let discriminant = half_b*half_b - a*c;
+    
+    if discriminant < 0.0 {
+        return -1.0
+    }
+    else {
+        return (-half_b - discriminant.sqrt()) / a
+    }
 }

@@ -3,7 +3,6 @@
  *  - https://raytracing.github.io/books/RayTracingInOneWeekend.html
  *  - https://blog.singleton.io/posts/2022-01-02-raytracing-with-rust/
  */
-
 use std::io::{Write, stderr, stdout, BufWriter};
 use rtrace::vec3::{Vec3, Point3, Color};
 use rtrace::color::write_color;
@@ -44,7 +43,7 @@ fn basic_image() {
             let v: f64 = f64::from(j) / f64::from(image_height-1);
 
             let r: Ray = Ray::new(origin, lower_left_corner + u*horizontal + v*vertical - origin);
-            let pxl: Color = ray_color(r);
+            let pxl: Color = ray_color(&r);
             let mut stdout = BufWriter::new(stdout().lock());
             write_color(&mut stdout, pxl).unwrap();
         }
@@ -92,7 +91,7 @@ fn main() {
     let v1 = Vec3::new(1.0, 2.0, 3.0);
     let v2 = Vec3::new(69.0, 420.0, 3.0);
     let ray: Ray = Ray::new(v1, v2);
-    let sunshine = ray_color(ray);
+    let sunshine = ray_color(&ray);
     // println!("SCALAR: {}", v1*5.0);
     // println!("{}", sunshine);
     basic_image()
