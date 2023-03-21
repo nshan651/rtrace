@@ -42,14 +42,14 @@ impl Vec3 {
     }
 
     /* Dot product */
-    pub fn dot(&self, rhs: Vec3) -> f64 {
+    pub fn dot(&self, rhs: &Vec3) -> f64 {
         self.e[0] * rhs.e[0] +
         self.e[1] * rhs.e[1] +
         self.e[2] * rhs.e[2]
     }
 
     /* Cross product */
-    pub fn cross(&self, rhs: Vec3) -> Vec3 {
+    pub fn cross(&self, rhs: &Vec3) -> Vec3 {
         Vec3::new( 
             self.e[1] * rhs.e[2] - self.e[2] * rhs.e[1],
             self.e[2] * rhs.e[0] - self.e[0] * rhs.e[2],

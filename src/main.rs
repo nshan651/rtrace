@@ -75,8 +75,8 @@ fn test_prints() {
 
     println!("FMT: {}", v1);
 
-    println!("Dot product: {}", v1.dot(v2));
-    println!("Cross product: {}", v1.cross(v2));
+    println!("Dot product: {}", v1.dot(&v2));
+    println!("Cross product: {}", v1.cross(&v2));
 
     println!("Unit vector: {}", v1.unit_vector());
 

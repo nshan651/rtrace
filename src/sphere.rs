@@ -1,5 +1,5 @@
 use crate::vec3::*;
-use crate::ray::{Ray, Hittable};
+use crate::ray::{Ray, Hittable, HitRecord};
 
 pub struct Sphere {
     pub center: Point3,
@@ -16,15 +16,15 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    pub fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> bool {
+    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>{
         let oc: Vec3 = r.origin - self.center;
         let a = r.direction().length_squared();
-        let half_b = oc.dot(r.direction());
+        let half_b = oc.dot(&r.direction());
         let c = oc.length_squared() - self.radius*self.radius;
 
         let discriminant = half_b*half_b - a*c;
         if discriminant < 0.0 {
-            return false
+            return None;
         }
         let sqrtd = discriminant.sqrt();
 
@@ -33,18 +33,25 @@ impl Hittable for Sphere {
         if root < t_min || t_max < root {
             let root = (-half_b + sqrtd) / a;
             if root < t_min || t_max < root {
-                return false
+                return None;
             }
         }
 
-
+        let t = root;
+        let p = r.at(root);
+        let normal = (p - self.center) / self.radius;
+        let front_face = r.direction.dot(&normal) < 0.0;
+        // Determine the surface side
+        let normal = if front_face { normal } else { -normal };
+       
+        return Some(HitRecord { p, normal, t, front_face, });
     }
 }
 
 pub fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> f64 {
     let oc: Vec3 = r.origin - center;
     let a = r.direction().length_squared();
-    let half_b = oc.dot(r.direction());
+    let half_b = oc.dot(&r.direction());
     let c = oc.length_squared() - radius*radius;
     let discriminant = half_b*half_b - a*c;
     
