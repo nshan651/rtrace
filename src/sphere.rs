@@ -1,6 +1,8 @@
+use serde::{Deserialize, Serialize};
 use crate::vec3::*;
 use crate::ray::{Ray, Hittable, HitRecord};
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Sphere {
     pub center: Point3,
     pub radius: f64,
@@ -18,11 +20,11 @@ impl Sphere {
 impl Hittable for Sphere {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>{
         let oc: Vec3 = r.origin - self.center;
-        let a = r.direction().length_squared();
-        let half_b = oc.dot(&r.direction());
+        let a = r.direction.length_squared();
+        let half_b = oc.dot(&r.direction);
         let c = oc.length_squared() - self.radius*self.radius;
 
-        let discriminant = half_b*half_b - a*c;
+        let discriminant = (half_b*half_b) - (a*c);
         if discriminant < 0.0 {
             return None;
         }

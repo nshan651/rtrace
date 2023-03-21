@@ -8,6 +8,8 @@ use rtrace::vec3::{Vec3, Point3, Color};
 use rtrace::color::write_color;
 use rtrace::ray::*;
 use rtrace::raytracer::*;
+use rtrace::config::*;
+use rtrace::sphere::*;
 
 /*
     - The pixels are written out in rows with pixels left to right.
@@ -20,6 +22,18 @@ fn basic_image() {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = image_width / aspect_ratio as i32;
+
+    // World
+    let world = Config {
+        objects : vec!(
+            Sphere::new(
+                Point3::new(0.0, 0.0, -1.0), 0.5,
+            ),
+            Sphere::new(
+                Point3::new(0.0, -100.5, -1.0), 100.0,
+            )
+        )
+    };
 
     // Camera
     let viewport_height = 2.0;
@@ -42,8 +56,8 @@ fn basic_image() {
             let u: f64 = f64::from(i) / f64::from(image_width-1);
             let v: f64 = f64::from(j) / f64::from(image_height-1);
 
-            let r: Ray = Ray::new(origin, lower_left_corner + u*horizontal + v*vertical - origin);
-            let pxl: Color = ray_color(&r);
+            let r: Ray = Ray::new(origin, lower_left_corner + u*horizontal + v*vertical);
+            let pxl: Color = ray_color(&r, &world);
             let mut stdout = BufWriter::new(stdout().lock());
             write_color(&mut stdout, pxl).unwrap();
         }
@@ -88,10 +102,10 @@ fn test_prints() {
 fn main() {
     // test_prints();
     // basic_image();
-    let v1 = Vec3::new(1.0, 2.0, 3.0);
-    let v2 = Vec3::new(69.0, 420.0, 3.0);
-    let ray: Ray = Ray::new(v1, v2);
-    let sunshine = ray_color(&ray);
+    // let v1 = Vec3::new(1.0, 2.0, 3.0);
+    // let v2 = Vec3::new(69.0, 420.0, 3.0);
+    // let ray: Ray = Ray::new(v1, v2);
+    // let sunshine = ray_color(&ray);
     // println!("SCALAR: {}", v1*5.0);
     // println!("{}", sunshine);
     basic_image()
